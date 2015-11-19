@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Foodie</title>
+
+    <!-- Sets initial viewport load and disables zooming  -->
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+
+    <!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+  
+    <link href="css/styles.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>    
+      </div>
+      <a class="navbar-brand" href="#"></a>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-left">
+            <li><a href="food-listing.html">Food Listing</a></li>
+            <li><a href="chef-listing.html">Chef Listing</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="chef.html">Chef</a></li>
+          <li><a href="user-profile.html">User Profile</a></li>
+        </ul>
+      </div>
+    </nav>
+
+
+    <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
+    <div id="chef-page" class="content">
+      <div id="chef-banner">
+        <div class="container">
+          <div class="row">
+              <div class="chef-profile-info">
+                <h3 id="p_company">Brook Alex</h3>
+                 <img src="images/0.gif" id="p_rating" > <span id="rating_text"></span>
+              </div>
+              <div class="chef-banner-image">
+                <img id="p_image1" class="img-responsive banner-img img-rounded" src="data:image/gif;base64,R0lGODlhAQABAIAAAP7//wAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="chef">
+              </div>            
+              
+          </div>
+        </div>
+      </div>
+		
+		<div id="chef-info-cont">
+        <div class="container">
+          <div class="row">
+            <div class="col-xs-4 chef-info">
+              <div class="chef-info-box">
+                <h3 id="p_people_served">0</h3>
+                <p>People Served</p>
+              </div>
+            </div>
+				<div class="col-xs-4 chef-info">
+              <div class="chef-info-box">
+                <h3 id="p_food_cost">0</h3>
+                <p>Food Cost</p>
+              </div>
+            </div>
+            <div class="col-xs-4 chef-info">
+              <div class="chef-info-box last-info-box">
+                <h3 id="p_rating_count">0</h3>
+                <p>Reviews</p>
+              </div>
+            </div>            
+          </div>
+        </div>
+      </div>
+		
+		
+		
+		<h2 class="text-center">Available Dishes</h2>
+		
+		
+		
+		
+      <div id="chef-foods">
+        
+		  <div class="food-listing hidden">
+          <div class="food-image-cont">
+            <img class="img-responsive img-circle media-object pull-left" src="images/food-1.png" align="food img">
+          </div>
+          <div class="food-info-cont">
+            <div class="food-info-body">
+              <a class="dishTitle" href="#">Strawbery muffin</a><br />
+                  <p class="dishInfo"></p>
+						<img src="images/0.gif" alt="" class="rating" />
+						<span class="rating_info"></span>
+	         </div>
+          </div>
+        </div>
+        
+		  <div class="aLoading text-center" style="display:none"><img src="images/loading.gif" sytle=" margin: 0 auto;" /></div>
+        
+
+        
+      </div>
+    </div>
+
+    <!-- Script -->
+    <script src="js/jquery-1.11.3.min.js"></script> 
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/common.js"></script>
+<script>
+$(document).ready(function(e) {
+	var chef_id = getUrlParameter('id');
+	
+	var chef_data;
+	if( chef_id > 0 ){
+		
+		
+		
+		var jsonData = JSON.parse(localStorage.getItem('chefsData'));
+		for (var i = 0; i < jsonData.length; i++) {
+			if( jsonData[i].id == chef_id ){
+				chef_data = jsonData[i];
+				break;
+			}
+		}
+		$('#p_image1').prop('src', 'http://mobileapi.foodiesys.com/foodie-mssql/pics/'+chef_data.image2);
+		$('#p_company').html(chef_data.company);
+		$('#p_people_served').html(chef_data.people_served);
+		$('#p_food_cost').html(chef_data.food_cost);
+		$('#p_rating_count').html(chef_data.rating_count);
+		
+		
+		
+		var r = 0;
+		var r2 = '0.0'; 
+		if( jsonData[i].rating_count > 0 ){
+			r = jsonData[i].rating_sum /  jsonData[i].rating_count;
+			r2 = r.toFixed(1); 
+			r = (Math.round(r * 2) / 2).toFixed(1);
+			$('#p_rating').prop('src', 'images/'+r+'.gif');
+			$('#rating_text').html('('+r2+'/5)');
+		}
+	}
+	
+	loadDishes(chef_id);
+});
+
+
+function loadDishes(chef_id){
+	formData = 'chef_id='+chef_id;
+	console.log(formData);
+	$.ajax({
+		type: "POST", dataType: 'json', url: "http://mobileapi.foodiesys.com/foodie-mssql/ajax.php?h=getDishes", data: formData,
+		beforeSend: function() { $('div.aLoading').show();  },
+		complete: function() { $('div.aLoading').hide(); },
+		error: function(data, errorThrown) { alert('request failed :' + errorThrown); },
+		success: function(data) {
+			if (data.Success == 'true') {
+				if(data.Count > 0 ){
+					var dishData = data.Dishes;
+					$DTemp = $('.food-listing');
+					for (var i = 0; i < dishData.length; i++) {
+						$copy = $DTemp.clone().removeClass('hidden');
+						$copy.find('img.img-responsive').prop('src', 'http://mobileapi.foodiesys.com/foodie-mssql/pics/'+dishData[i].image1);
+						$copy.find('a.dishTitle').html(dishData[i].dish_name);
+						$copy.find('p.dishInfo').html('Price : $'+dishData[i].price+' &nbsp; Serving : '+dishData[i].serving);
+						
+						var r = 0;
+						var r2 = '0.0'; 
+						if( dishData[i].rating_count > 0 ){
+							r = dishData[i].rating_sum /  dishData[i].rating_count;
+							r2 = r.toFixed(1); 
+							r = (Math.round(r * 2) / 2).toFixed(1);
+						}
+						
+						$copy.find('img.rating').prop('src', 'images/'+r+'.gif');
+						$copy.find('.rating_info').html( '('+r2+'/5) &nbsp; '+dishData[i].rating_count+' Reviews' );
+						
+						
+						$copy.appendTo('#chef-foods');
+					}
+					//$DTemp.remove();
+				}else{
+					$('#chef-foods').html('<center>No Rocord Found!</center>');
+				}
+			}else { 
+				BAlert.find('.modal-header h3').html('<i class="fa fa-exclamation-triangle"></i> Error');
+				BAlert.find('.modal-body').html('<p class="text-danger">'+data.Msg+'</p>');
+				BAlert.modal();
+			}
+			if (data.JS) { eval(data.JS); }
+		}
+	}); // ajax	
+}
+
+</script>
+
+  </body>
+</html>

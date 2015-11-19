@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Foodie</title>
+
+<!-- Sets initial viewport load and disables zooming  -->
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+<!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- Include the compiled Ratchet CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/font-awesome.min.css" rel="stylesheet">
+<!--<link href="css/ratchet.css" rel="stylesheet">-->
+<link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+
+
+<!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
+<div id="lgn-sign-page" class="content">
+	<div id="lgn-signUp-buton">
+		<div class="col-xs-12">
+			<div class="col-xs-6 no-padding"> <a href="#" class="btn btn-default btn-block btn-user btn-sign-in">Login</a> </div>
+			<div class="col-xs-6 no-padding"> <a href="#" class="btn btn-default btn-block btn-user btn-register btn-active">Register</a> </div>
+		</div>
+	</div>
+	<form id="frmLogin" class="user-form login-form" method="post" style="display:none">
+		<h4 class="form-heading text-center">Login to your account</h4>
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon for-user"><i class="fa fa-at"></i></div>
+				<input type="email" name="email" placeholder="Email" class="form-control required email" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon for-user"><i class="fa fa-lock"></i></div>
+				<input type="password" name="password" placeholder="Password" class="form-control required">
+			</div>
+		</div>
+		<button class="btn btn-positive btn-block">Login</button>
+	</form>
+	<form id="frmRegister" method="post" class="class="form-horizontal"">
+		<h4 class="form-heading text-center">Create account</h4>
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon for-user"><i class="fa fa-user"></i></div>
+				<input type="text" placeholder="Your Name" name="n[first_name]" class="form-control required">
+			</div>
+		</div>
+		
+		
+		
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon for-user"><i class="fa fa-at"></i></div>
+				<input type="email" placeholder="Email" name="n[email]" class="form-control required email" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="input-group">
+				<div class="input-group-addon for-user"><i class="fa fa-lock"></i></div>
+				<input type="text" placeholder="Choose Password" name="n[password]" class="form-control required" />
+			</div>
+		</div>
+		
+		<button type="submit" class="btn btn-positive btn-block">Sign up</button>
+	</form>
+	
+	<div id="social-icon" class="text-center">
+		<h4>Or Sign up with</h4>
+		<a href="#"><img src="images/facebook.png" alt="facebook"></a> <a href="#"><img src="images/twitter.png" alt="twitter"></a> </div>
+</div>
+
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/jquery.validate.min.js"></script> 
+<script src="js/bootstrap.min.js"></script>
+<!-- Include the compiled Ratchet JS --> 
+<!--<script src="js/ratchet.js"></script>--> 
+<script src="js/common.js"></script> 
+<script>
+$('.btn-user').on('click',function(){
+	$('.btn-user').removeClass('btn-active');
+	$(this).addClass('btn-active');
+	if($(this).hasClass('btn-sign-in')){
+		$('#frmRegister').hide();
+		$('#frmLogin').show(200);
+	}else{
+		$('#frmLogin').hide();
+		$('#frmRegister').show(200);
+	}
+});
+
+$("#frmRegister").validate({
+	errorPlacement: function(error, element) {},
+	submitHandler: function(form) {
+		if( $('#S_Password').val() != $('#S_rePassword').val() ){
+			BAlert.find('.modal-header h3').html('<i class="fa fa-exclamation-triangle"></i> Error');
+			BAlert.find('.modal-body').html('<p class="text-danger">Password fields must match and password must be at least 6 characters long. </p>');
+			BAlert.modal();	
+		}else{
+			formData = $(form).serialize();
+			$.ajax({
+				type: "POST", dataType: 'json', url: "http://mobileapi.foodiesys.com/foodie-mssql/ajax.php?h=register", data: formData,
+				beforeSend: function() { waitingDialog.show('Loading', {dialogSize: 'sm', progressType: 'info'}); },
+				complete: function() { waitingDialog.hide(); },
+				error: function(data, errorThrown) { alert('request failed :' + errorThrown); },
+				success: function(data) {
+					if (data.Success == 'true') {
+						localStorage.setItem('userId', data.userId );
+						document.location = 'map.html';
+					} else { 
+						BAlert.find('.modal-header h3').html('<i class="fa fa-exclamation-triangle"></i> Error');
+						BAlert.find('.modal-body').html('<p class="text-danger">'+data.Msg+'</p>');
+						BAlert.modal();
+					}
+					if (data.JS) { eval(data.JS); }
+				}
+			}); // ajax	
+		}
+	}// submit handler
+});
+
+$("#frmLogin").validate({
+	errorPlacement: function(error, element) {},
+	submitHandler: function(form) {
+		formData = $(form).serialize();
+		$.ajax({
+			type: "POST", dataType: 'json', url: "http://mobileapi.foodiesys.com/foodie-mssql/ajax.php?h=login", data: formData,
+			beforeSend: function() { waitingDialog.show('Loading', {dialogSize: 'sm', progressType: 'info'}); },
+			complete: function() { waitingDialog.hide(); },
+			error: function(data, errorThrown) { alert('request failed :' + errorThrown); },
+			success: function(data) {
+				if (data.Success == 'true') {
+					localStorage.setItem('userId', data.userId );
+					document.location = 'map.html';
+				} else { 
+					BAlert.find('.modal-header h3').html('<i class="fa fa-exclamation-triangle"></i> Error');
+					BAlert.find('.modal-body').html('<p class="text-danger">'+data.Msg+'</p>');
+					BAlert.modal();
+				}
+				if (data.JS) { eval(data.JS); }
+			}
+		}); // ajax	
+	}// submit handler
+});
+
+</script>
+</body>
+</html>

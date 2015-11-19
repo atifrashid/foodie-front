@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Foodie</title>
+
+    <!-- Sets initial viewport load and disables zooming  -->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+    <!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Include the compiled Ratchet CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+     <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/ratchet.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+
+    
+  </head>
+  <body>
+
+    <!-- Make sure all your bars are the first things in your <body> -->
+    <header class="bar bar-nav">
+      <a href="#" class="icon icon-left-nav pull-left"><span>Back</span></a>
+      <a href="#" class="pull-right menu">Menu</a>
+      <h1 class="title">Login,Register</h1>
+    </header>
+
+
+    <!-- Wrap all non-bar HTML in the .content div (this is actually what scrolls) -->
+    <div id="lgn-sign-page" class="content">
+      <div id="lgn-signUp-buton">
+        <div class="col-xs-12">
+          <div class="col-xs-6 no-padding">
+            <a href="sign-in.html" class="btn btn-default btn-block btn-user btn-sign-in btn-active">Login</a>  
+          </div>
+          <div class="col-xs-6 no-padding">
+            <a href="register.html" class="btn btn-default btn-block btn-user btn-register">Register</a>  
+          </div>
+        </div>
+      </div>
+      <form class="user-form login-form">
+        <h4 class="form-heading text-center">Sign in to your account</h4>
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">
+              <img class="user-image" src="images/input-name-icon.png" alt="">
+            </div>
+            <input type="text" placeholder="Username">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon for-pass-image">
+              <img class="pass-image" src="images/input-password-icon.png" alt="">
+            </div>
+            <input type="password" placeholder="Password">
+          </div>
+        </div>        
+          <button class="btn btn-positive btn-block">Sign in</button>
+      </form>
+      <div id="social-icon" class="text-center">
+        <h4>Or Sign in with</h4>        
+        <a href="#"><img src="images/facebook.png" alt="facebook"></a>
+        <a href="#"><img src="images/twitter.png" alt="twitter"></a>
+      </div>
+
+    </div>
+  
+
+    <!-- Include the compiled Ratchet JS -->
+    <script src="js/ratchet.js"></script>
+
+  </body>
+</html>

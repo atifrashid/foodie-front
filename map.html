@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Foodie</title>
+
+<!-- Sets initial viewport load and disables zooming  -->
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+<!-- Makes your prototype chrome-less once bookmarked to your phone's home screen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- Include the compiled Ratchet CSS -->
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/font-awesome.min.css" rel="stylesheet">
+<link href="css/styles.css" rel="stylesheet">
+<style>
+html, body { height: 100%; }
+</style>
+</head>
+<body>
+
+<div id="map" style="height:100% ;"></div>
+
+
+<script src="js/jquery-1.11.3.min.js"></script> 
+<script src="http://maps.google.com/maps/api/js?sensor=true" type="text/javascript"></script>
+<script>
+
+  /**/
+	var mapOptions = {
+		center: new google.maps.LatLng( localStorage.getItem('lat') , localStorage.getItem('lng') ),
+		mapTypeId: google.maps.MapTypeId.ROADMAP,
+		zoom:14,
+		scrollwheel: false,
+		
+		//styles: [{"featureType":"all","elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#000000"},{"lightness":40}]},{"featureType":"all","elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#000000"},{"lightness":16}]},{"featureType":"all","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":17},{"weight":1.2}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":20}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":21}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#000000"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#000000"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":16}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":19}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#000000"},{"lightness":17}]}]
+	
+	};
+					 
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    var infowindow = new google.maps.InfoWindow({maxWidth: 400});
+
+
+	var image = {
+    url: '/media/m2.png',
+    // This marker is 20 pixels wide by 32 pixels high.
+    size: new google.maps.Size(24, 24),
+    // The origin for this image is (0, 0).
+    origin: new google.maps.Point(0, 0),
+    // The anchor for this image is the base of the flagpole at (0, 32).
+    anchor: new google.maps.Point(12, 12)
+  	};
+
+   var marker, i, chef;
+	var jsonData;
+	
+	if( localStorage.getItem('chefsCount') > 0 ){
+		var jsonData = JSON.parse(localStorage.getItem('chefsData'));
+		for (var i = 0; i < jsonData.length; i++) {
+			chef = jsonData[i];
+			marker = new google.maps.Marker({
+				position: new google.maps.LatLng( chef.lat, chef.lng),
+				map: map,
+				//icon: image,
+			});
+			
+			google.maps.event.addListener(marker, 'click', (function(marker, i) {
+				return function() {
+					var r = 0;
+					var r2 = '0.0'; 
+					if( jsonData[i].rating_count > 0 ){
+						r = jsonData[i].rating_sum /  jsonData[i].rating_count;
+						r2 = r.toFixed(1); 
+						r = (Math.round(r * 2) / 2).toFixed(1);
+					}
+					ri = '<img src="images/'+r+'.gif" alt="" /> ('+ r2 + '/5)<br>In '+jsonData[i].rating_count+' Reviews' ; 
+					var c = '<div class="col-xs-5 no-lft-padding"><img src="http://mobileapi.foodiesys.com/foodie-mssql/pics/'+jsonData[i].image1+'" class="img-rounded" style="width:100%;"  /></div>';
+						c = c +	'<div class="col-xs-7 no-padding"><strong><a href="chef_profile.html?id='+jsonData[i].id+'">'+jsonData[i].company+'</a></strong><br />People Served: '+jsonData[i].people_served+'<br>Food Cost: '+jsonData[i].food_cost+'<br />';
+						c = c +	ri+'</div><div class="clearfix"></div><strong>Address:</strong> '+jsonData[i].address+', '+jsonData[i].city+' '+jsonData[i].state+' '+jsonData[i].zip;
+						//c = c +  '<a href="#" rel="'+jsonData[i].id+'" class="btn btn-xs btn-primary pull-right aResv">Reservation</a>';
+					infowindow.setContent(c);
+					infowindow.open(map, marker);
+				}
+			})(marker, i));	
+		}
+		
+	}
+
+$(document).ready(function(e) {
+	$('a.aResv').on('click',function(){
+		localStorage.setItem('view_chef_id', $(this).prop('rel'));
+		document.location = 'chef_profile.html';
+	});
+});    
+	 
+	 
+/**/
+</script>
+
+
+</body>
+</html>
