@@ -17,4 +17,6 @@
         Atif Rashid
     </author>
 
+	
+	<accesss origin="*" />
 </widget>
