@@ -62,10 +62,10 @@ function showPosition(position) {
 		data: formData,
 		//beforeSend: function() { waitingDialog.show('Loading', {dialogSize: 'sm', progressType: 'info'}); },
 		//complete: function() { waitingDialog.hide(); },
-		error: function( jqXHR, textStatus, errorThrown ){ ajaxError( jqXHR ); document.location = 'map.html'; },
+		error: function( jqXHR, textStatus, errorThrown ){ ajaxError( jqXHR ); },
 		success: function(data) {
 			if (data.Success == 'true') {
-				console.log(data.Chefs);
+				//console.log(data.Chefs);
 				localStorage.setItem('chefsData', data.Chefs );
 				localStorage.setItem('chefsCount', data.Count );
 				
