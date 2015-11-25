@@ -58,10 +58,11 @@ function showPosition(position) {
 	var formData = 'lat='+lat+'&lng='+lng;
 	
 	$.ajax({
-		type: "POST", dataType: 'json', url: "http://mobileapi.foodiesys.com/foodie-mssql/ajax.php?h=initApp", data: formData,
+		type: "POST", dataType: 'json', url: "http://mobileapi.foodiesys.com/foodie-mssql/ajax.php?h=initApp",
+		data: formData,
 		//beforeSend: function() { waitingDialog.show('Loading', {dialogSize: 'sm', progressType: 'info'}); },
 		//complete: function() { waitingDialog.hide(); },
-		//error: function( jqXHR, textStatus, errorThrown ){ ajaxError( jqXHR ); },
+		error: function( jqXHR, textStatus, errorThrown ){ ajaxError( jqXHR ); document.location = 'map.html'; },
 		success: function(data) {
 			if (data.Success == 'true') {
 				console.log(data.Chefs);
