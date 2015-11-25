@@ -180,7 +180,7 @@ html,body {
 	display: inline-block;
 	color: #fff;
 	position: relative;
-	padding: 40px;
+	padding: 20px;
 	text-align: center;
 	transition:all 0.3s ease 0s;
 	-webkit-transition:all 0.3s ease 0s;
@@ -277,6 +277,15 @@ span.label.label-default{
 	-webkit-transition:all 0.3s ease 0s;
 	-moz-transition:all 0.3s ease 0s;
 }
+.byChef a{
+	color: #076796;
+	font-weight: normal;
+	text-decoration: none;
+	transition:all 0.3s ease 0s;
+	-webkit-transition:all 0.3s ease 0s;
+	-moz-transition:all 0.3s ease 0s;
+}
+
 .food-info-body p {
 	margin-bottom: 0px;
 }
@@ -426,7 +435,7 @@ span.label.label-default{
 	bottom:-80%;
 }
 #user-form {
-	margin-top: 50px;
+	margin-top: 5px;
 	z-index: 99;
 	padding: 15px;
 }

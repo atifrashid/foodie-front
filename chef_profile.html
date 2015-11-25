@@ -31,7 +31,7 @@
       <a class="navbar-brand" href="#"></a>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav navbar-left">
-            <li><a href="food-listing.html">Food Listing</a></li>
+            <li><a href="reservations.html">Food Listing</a></li>
             <li><a href="chef-listing.html">Chef Listing</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -103,6 +103,7 @@
                   <p class="dishInfo"></p>
 						<img src="images/0.gif" alt="" class="rating" />
 						<span class="rating_info"></span>
+						<button data-dish="0" class="btn btn-xs btn-primary pull-right btnReserve">Reserve Now</button>  
 	         </div>
           </div>
         </div>
@@ -113,14 +114,102 @@
         
       </div>
     </div>
+	 
+	
+<br /><br /><br /><br /><br /><br />
+	
+<div class="modal fade" id="popReserve" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="popReserve">Add Reservation</h4>
+      </div>
+      <div class="modal-body">
+ 
+ 		<h4 id="modHeading" class="text-center">Ckicken Egg Fried Rice</h4>
+		<p><img id="modImg" class="img-responsive text-center" src="http://mobileapi.foodiesys.com/foodie-mssql/pics/biryani.jpg"  /></p>
+		
+		<p id="modPrice" class="dishInfo">Price : $10.00 &nbsp; Serving : 2</p>
+		<img id="modRatingImg" src="images/4.5.gif" alt="" class="rating"> &nbsp; <span id="modRatingInfo" class="rating_info">(4.5/5) &nbsp; 4 Reviews</span>
+		
+		<form method="post" id="frmReserve">
+		<br />
+		<div class="form-group">
+			<label  class="">Quantity to Order</label>
+			<div class=""><input type="number" name="quantity" class="form-control required" value="1" placeholder="Quantity to Order"></div>
+		</div>
+		
+		
+		
+		<div class="form-group">
+			<label  class="">Pickup Date</label>
+			<div class=""><input type="date" name="d_date" class="form-control required" value="" placeholder="Pickup Date"></div>
+		</div>
+		
+		<div class="form-group">
+			<label  class="">Pickup Time</label>
+			<div class=""><input type="time" name="d_time" class="form-control required" value="" placeholder="Pickup Time"></div>
+		</div>
+		<input type="hidden" id="dish_id" name="dish_id">
+		<input type="hidden" id="chef_id" name="chef_id">
+		<input type="hidden" id="user_id" name="user_id">
+		<input type="hidden" id="unit_price" name="unit_price">
+		</form>
+	      
+			
+			
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button id="btnOrder" type="button" class="btn btn-primary">Order Now</button>
+      </div>
+    </div>
+  </div>
+</div>	
+	
+	 
+	 <div id="bottom-bar">
+      <div class="container">
+        <div class="row">
+          
+            <div class="col-xs-4 no-padding">
+            <a class="tab-item" href="#">
+              <img class="tab-icon active" src="images/map-icon.png" alt="map-icon">          
+              <!-- <i class="fa fa-map-o tab"></i> -->
+              <img class="border-image" src="images/border-image.png" alt="border-image">
+            </a>
+            </div>
+            <div class="col-xs-4 no-padding">
+            <a class="tab-item " href="reservations.html">
+              <img class="tab-icon" src="images/food-icon.png" alt="food-icon">                    
+              <img class="border-image" src="images/border-image.png" alt="border-image">
+            </a>
+            </div>
+            <div class="col-xs-4 no-padding">
+            <a class="tab-item" href="user-profile.html">
+              <img class="tab-icon" src="images/profile-icon.png" alt="map-icon">                    
+            </a>        
+            </div>
+          
+        </div>
+      </div>
+    </div>
+    
+
 
     <!-- Script -->
     <script src="js/jquery-1.11.3.min.js"></script> 
     <script src="js/bootstrap.min.js"></script>
+	 <script src="js/jquery.validate.min.js"></script> 
     <script src="js/common.js"></script>
 <script>
+
+var dishData;
+
 $(document).ready(function(e) {
 	var chef_id = getUrlParameter('id');
+	
 	
 	var chef_data;
 	if( chef_id > 0 ){
@@ -141,19 +230,72 @@ $(document).ready(function(e) {
 		$('#p_rating_count').html(chef_data.rating_count);
 		
 		
+		obRat = ratingCal( jsonData[i].rating_sum, jsonData[i].rating_count );
+		$('#p_rating').prop('src', obRat['starImg'] );
+		$('#rating_text').html( obRat['ratingTxt'] );
 		
-		var r = 0;
-		var r2 = '0.0'; 
-		if( jsonData[i].rating_count > 0 ){
-			r = jsonData[i].rating_sum /  jsonData[i].rating_count;
-			r2 = r.toFixed(1); 
-			r = (Math.round(r * 2) / 2).toFixed(1);
-			$('#p_rating').prop('src', 'images/'+r+'.gif');
-			$('#rating_text').html('('+r2+'/5)');
-		}
 	}
 	
 	loadDishes(chef_id);
+	
+	$('#chef-foods').on('click', '.btnReserve',function(){
+		//alert($(this).prop('data-dish'));
+		var dish_id = $(this).prop('data-dish');
+		var thisDish ;
+		for (var i = 0; i < dishData.length; i++){
+			if( dishData[i].id == dish_id ){
+				thisDish = dishData[i];
+				break;
+			}
+		}
+		
+		$('#dish_id').val( dish_id );
+		$('#chef_id').val( thisDish.chef_id );
+		$('#user_id').val( localStorage.getItem('userId') );
+		$('#unit_price').val(thisDish.price);
+		
+		$('#modHeading').html( thisDish.dish_name );
+		$('#modImg').prop('src', 'http://mobileapi.foodiesys.com/foodie-mssql/pics/'+thisDish.image2);
+		$('#modPrice').html( 'Price : $'+thisDish.price+' &nbsp; Serving : '+thisDish.serving );
+		
+		obRat = ratingCal( thisDish.rating_sum, thisDish.rating_count );
+		$('#modRatingImg').prop('src', obRat['starImg'] );
+		$('#modRatingInfo').html(obRat['ratingTxt']+'&nbsp; '+thisDish.rating_count+' Reviews' );
+		
+		$('#popReserve').modal();
+	});
+	
+	$('#btnOrder').on('click',function(){
+		$('#frmReserve').submit();		
+	});
+	
+	$('#frmReserve').validate({
+		errorPlacement: function(error, element) {},
+		submitHandler: function(form) {
+			formData = $(form).serialize();
+			$.ajax({
+				type: "POST", dataType: 'json', url: "http://mobileapi.foodiesys.com/foodie-mssql/ajax.php?h=Reserve", data: formData,
+				beforeSend: function() { waitingDialog.show('Loading', {dialogSize: 'sm', progressType: 'info'}); },
+				complete: function() { waitingDialog.hide(); },
+				error: function( jqXHR, textStatus, errorThrown ){ ajaxError( jqXHR ); },
+				success: function(data) {
+					if (data.Success == 'true') {
+						$('#popReserve').modal('hide');
+						BAlert.find('.modal-header h3').html('<i class="fa fa-check"></i> Success');
+						BAlert.find('.modal-body').html('<p class="text-success">'+data.Msg+'</p>');
+						BAlert.modal();
+					} else { 
+						BAlert.find('.modal-header h3').html('<i class="fa fa-exclamation-triangle"></i> Error');
+						BAlert.find('.modal-body').html('<p class="text-danger">'+data.Msg+'</p>');
+						BAlert.modal();
+					}
+					if (data.JS) { eval(data.JS); }
+				}
+			}); // ajax	
+		
+		}// submit handler
+	});
+	
 });
 
 
@@ -164,28 +306,24 @@ function loadDishes(chef_id){
 		type: "POST", dataType: 'json', url: "http://mobileapi.foodiesys.com/foodie-mssql/ajax.php?h=getDishes", data: formData,
 		beforeSend: function() { $('div.aLoading').show();  },
 		complete: function() { $('div.aLoading').hide(); },
-		error: function(data, errorThrown) { alert('request failed :' + errorThrown); },
+		error: function( jqXHR, textStatus, errorThrown ){ ajaxError( jqXHR ); },
 		success: function(data) {
 			if (data.Success == 'true') {
 				if(data.Count > 0 ){
-					var dishData = data.Dishes;
+					dishData = data.Dishes;
 					$DTemp = $('.food-listing');
 					for (var i = 0; i < dishData.length; i++) {
 						$copy = $DTemp.clone().removeClass('hidden');
 						$copy.find('img.img-responsive').prop('src', 'http://mobileapi.foodiesys.com/foodie-mssql/pics/'+dishData[i].image1);
 						$copy.find('a.dishTitle').html(dishData[i].dish_name);
+						$copy.find('a.dishTitle').prop('rel', dishData[i].id );
+						$copy.find('.btnReserve').prop('data-dish', dishData[i].id );
 						$copy.find('p.dishInfo').html('Price : $'+dishData[i].price+' &nbsp; Serving : '+dishData[i].serving);
 						
-						var r = 0;
-						var r2 = '0.0'; 
-						if( dishData[i].rating_count > 0 ){
-							r = dishData[i].rating_sum /  dishData[i].rating_count;
-							r2 = r.toFixed(1); 
-							r = (Math.round(r * 2) / 2).toFixed(1);
-						}
+						obRat = ratingCal( dishData[i].rating_sum, dishData[i].rating_count );
 						
-						$copy.find('img.rating').prop('src', 'images/'+r+'.gif');
-						$copy.find('.rating_info').html( '('+r2+'/5) &nbsp; '+dishData[i].rating_count+' Reviews' );
+						$copy.find('img.rating').prop('src', obRat['starImg']);
+						$copy.find('.rating_info').html( obRat['ratingTxt']+' &nbsp; '+dishData[i].rating_count+' Reviews' );
 						
 						
 						$copy.appendTo('#chef-foods');

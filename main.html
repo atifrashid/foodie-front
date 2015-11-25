@@ -61,14 +61,14 @@ function showPosition(position) {
 		type: "POST", dataType: 'json', url: "http://mobileapi.foodiesys.com/foodie-mssql/ajax.php?h=initApp", data: formData,
 		//beforeSend: function() { waitingDialog.show('Loading', {dialogSize: 'sm', progressType: 'info'}); },
 		//complete: function() { waitingDialog.hide(); },
-		error: function(data, errorThrown) { alert('request failed :' + errorThrown); },
+		error: function( jqXHR, textStatus, errorThrown ){ ajaxError( jqXHR ); },
 		success: function(data) {
 			if (data.Success == 'true') {
 				console.log(data.Chefs);
 				localStorage.setItem('chefsData', data.Chefs );
 				localStorage.setItem('chefsCount', data.Count );
 				
-				if(localStorage.getItem("userId")=== null){
+				if(empty(localStorage.getItem("userId"))){
 					setTimeout(function(){ document.location = 'register.html'; }, 1000);
 				}else{
 					setTimeout(function(){ document.location = 'map.html'; }, 1000);
