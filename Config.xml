@@ -17,8 +17,10 @@
 
 	
 	<accesss origin="*" />
-	
-	<allow-navigation href="http://*/*" />
-	<allow-intent href="http://*/*" />
+	<allow-navigation href = "http://mobileapi.foodiesys.com/*" />	
+	<plugin name="cordova-plugin-whitelist" version="1"/>
+	<allow-intent href="http://*/*"/>
+	<allow-intent href="https://*/*"/>
+
 	
 </widget>
