@@ -1,19 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-    <widget xmlns   = "http://www.w3.org/ns/widgets"
-        xmlns:gap   = "http://phonegap.com/ns/1.0"
-        id          = "com.phonegap.foodie"
-        versionCode = "10" 
-        version     = "1.0.0" >
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.phonegap.foodie" version="1.5.0">
 
-    <!-- versionCode is optional and Android only -->
+
 
     <name>Foodie</name>
-
     <description>Foodie App</description>
-
-    <author href="https://build.phonegap.com" email="atifrashid@hotmail.com">
-        Atif Rashid
-    </author>
+    <author href="https://build.phonegap.com" email="atifrashid@hotmail.com">Atif Rashid</author>
 
 	
 	<accesss origin="*" />
